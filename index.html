@@ -307,8 +307,8 @@ document.getElementById('backblack').addEventListener('change', function() {
 
             // フリーズを開始
             freezeLocker = setInterval(function() {
-                h5gg.setValue('0x' + black, 0, 'F64');
-                h5gg.setValue('0x' + black2, 0, 'F64');
+                h5gg.setValue('0x' + black, 0.3, 'F64');
+                h5gg.setValue('0x' + black2, 0.3, 'F64');
             }, 1); // 250msごとに値を更新
         }
     } else {
