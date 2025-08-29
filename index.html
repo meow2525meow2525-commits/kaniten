@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Agu+Display&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Agu Display', sans-serif;
+            color: #FFFFFF;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .titlebar {
+            background-color: #961D32Fb;
+            width: 300px;
+            height: 25px;
+            display: none;
+        }
+
+        .content {
+            background-color: #1F7035Fb;
+            width: 295px;
+            height: 160px;
+            display: none;
+            padding-left: 5px;
+        }
+
+        .intro {
+            color: #961D32;
+        }
+
+        hr {
+            margin: 0;
+            height: 0px;
+            border: solid 0.9px #961D32;
+        }
+
+        .checkboxItem {
+            display: inline-flex;
+            align-items: center;
+            column-gap: 4px;
+            line-height: 1;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .checkboxItem:not(:last-of-type) {
+            margin-right: 1px;
+        }
+
+        .checkbox {
+            appearance: none;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #676770;
+            cursor: pointer;
+            background-color: #961D32d9;
+            border-radius: 1px;
+        }
+
+        .checkbox:checked {
+            border: 1px solid #676770;
+            background-color: #961D32d9;
+        }
+
+        .checkbox:checked::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 2px;
+            width: 12px;
+            height: 6px;
+            border-bottom: 2px solid #1F7035;
+            border-left: 2px solid #1F7035;
+            transform: rotate(-45deg);
+        }
+
+        .inputRange {
+            appearance: none;
+            width: 200px;
+            height: 18px;
+            border: 1px solid #676770;
+            border-radius: 1px;
+            background: #961D32d9;
+            cursor: pointer;
+        }
+
+        .inputRange::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 20px;
+            border: 1px solid #676770;
+            border-radius: 1px;
+            background: #1F7035;
+            box-shadow: none;
+        }
+
+        /* スクロールを可能にし、スクロールバーを非表示にする */
+        .scrollable {
+            overflow-y: scroll;
+            scrollbar-width: none;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            display: none;
+        }
+
+        .start-button {
+            background-color: #961D32;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            margin: 10px 0;
+            border: solid 1px #676770;
+            height: 40px;
+            width: 200px;
+        }
+
+        .start-button:hover {
+            background-color: #961D32;
+        }
+        .farstcontent {
+            background-color: #1F7035Fb;
+            width: 295px;
+            height: 160px;
+            display: block; /* 初期状態は非表示 */
+            padding-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="farstcontent">
+    <button class="start-button" onclick="startExecution()">click!!</button>
+<p>
+Once you play AI or online, click the button in play or on the Home Screen
+</p>
+</div>
+    <div class="titlebar" id="titlebar">
+        <div id="ttt" onclick="openwindow()">&nbsp;🎅 Slither.io <span id="realtime"></span></div>
+    </div>
+    <input type="range" name="range" value="0.70" min="0.01" max="1.0" step="0.003" id="zzomsec" class="inputRange" style="display: none; margin-top: 17px; width: 215px;"/>
+
+    <div id="content" class="content scrollable">
+        <div class="intro">ModMenu by Tabemaru</div>
+        <hr>
+                <label class="checkboxItem">
+    <input type="checkbox" name="checkbox" id="icon" value="選択肢3" class="checkbox" onchange="hide()" />
+    Hide icon
+</label>
+        <label class="checkboxItem">
+            <input type="checkbox" name="checkbox" id="backblack" value="Background-black" class="checkbox" />
+            Background black
+        </label>
+        <label class="checkboxItem">
+            <input type="checkbox" name="checkbox" id="NoEffect" value="Noeffect" class="checkbox" />
+            No boost effect(online only)
+        </label>
+        <label class="checkboxItem">
+            <input type="checkbox" name="checkbox" id="smallfood" value="選択肢3" class="checkbox" />
+            Small food
+        </label>
+                <label class="checkboxItem">
+            <input type="checkbox" name="checkbox" id="bigname" value="選択肢4" class="checkbox" />
+            Big name
+        </label>
+        <hr>
+    <a style="font-size: 13px">Display the document under the titlebar</a>
+         <label class="checkboxItem">
+            <input type="checkbox" name="checkbox" id="zoomwhere" value="選択肢4" class="checkbox" />
+            Zoom
+        </label>
+   
+        <hr>
+        <label class="checkboxItem">
+            <input type="checkbox" id="zoomCheckbox" class="checkbox" onchange="toggleSlider()" />
+            <span style="line-height: 20px;">Zoom</span>
+        </label>
+        <input type="range" name="range" value="0.70" min="0.01" max="1.0" step="0.01" id="zzom" class="inputRange" disabled />
+      
+    </div>
+
+    <script>
+let baseAddress = null; // baseAddress の初期値
+let zoomLocker = null; // ズーム用のロック用変数
+let zoom2Locker = null; // ズーム用のロック用変数
+let speedLocker = null; // スピード用のロック用変数
+let freezeLocker = null; // フリーズ用のロック用変数
+let effectLocker = null; // フリーズ用のロック用変数
+let clockInterval = null; // 時刻表示用のインターバルを管理する変数
+
+// 時刻更新用の関数を定義
+function updateTime() {
+    const ttt = document.getElementById("ttt");
+    const content = document.getElementById('content');
+    const isVisible = content.style.display === 'block';
+
+    const nowTime = new Date();
+    const nowHour = nowTime.getHours().toString().padStart(2, '0');
+    const nowMin = nowTime.getMinutes().toString().padStart(2, '0');
+    const month = (nowTime.getMonth() + 1).toString().padStart(2, '0'); // 月（0ベースなので+1）
+    const day = nowTime.getDate().toString().padStart(2, '0'); 
+    const timeString = + month + "/" + day + "&nbsp" +nowHour + ":" + nowMin;
+
+    // ウィンドウの開閉状態に応じて表示を切り替え
+    ttt.innerHTML = isVisible ? "&nbsp;🎅&nbsp;Slither.io " + timeString : "&nbsp;🫎&nbsp;Slither.io " + timeString;
+}
+
+function openwindow() {
+    const content = document.getElementById('content');
+    const isVisible = content.style.display === 'block';
+
+    content.style.display = isVisible ? 'none' : 'block'; // コンテンツをトグル
+
+    // ウィンドウの開閉に応じてウィンドウサイズを変更
+    setWindowRect(500, 60, 300, isVisible ? 80 : 185);
+}
+
+// 初回ロード時にリアルタイムの時刻表示を開始
+if (clockInterval === null) {
+    clockInterval = setInterval(updateTime, 1); // 1秒ごとに時刻を更新
+}
+
+function toggleSlider() {
+    const zoomCheckbox = document.getElementById('zoomCheckbox');
+    document.getElementById('zzom').disabled = !zoomCheckbox.checked;
+
+    // チェックが外れた場合、ロックをクリア
+    if (!zoomCheckbox.checked && zoomLocker) {
+        clearInterval(zoomLocker);
+        zoomLocker = null; // ズームロッカーをリセット
+    }
+}
+
+function toggleSlider2() {
+    const speedCheckbox = document.getElementById('speedCheckbox');
+    document.getElementById('spped').disabled = !speedCheckbox.checked;
+
+    // チェックが外れた場合、ロックをクリア
+    if (!speedCheckbox.checked && speedLocker) {
+        clearInterval(speedLocker);
+        speedLocker = null; // スピードロッカーをリセット
+        let baseAddressNum = parseInt(baseAddress, 16);
+    
+    // baseAddressから0x220を引き算してspeedを計算
+    let speed = baseAddressNum - 0x220;
+        h5gg.setValue("0x" + (speed).toString(16), 1, 'F64');
+        
+    }
+}
+
+function startExecution() {
+    h5gg.clearResults();
+    h5gg.searchNumber('-1', 'F64', '0x000000000', '0x290000000');
+    h5gg.searchNearby('411', 'F64', '0x8');
+    let results = h5gg.getResults(1, 0);
+
+    if (results.length > 0) {
+        baseAddress = results[0].address; // baseAddressを取得
+    } else {
+        h5gg.clearResults();
+        h5gg.searchNumber('-1', 'F64', '0x000000000', '0x290000000')
+        h5gg.searchNearby('430', 'F64', '0x8');
+        results = h5gg.getResults(1, 0);
+        if (results.length > 0) {
+            baseAddress = results[0].address; // baseAddressを取得
+        }
+    }
+        if (baseAddress) {
+    const spaceAddress = (parseInt(baseAddress, 16) - 0x950).toString(16);
+
+    spaceLocker = setInterval(function() {
+        h5gg.setValue('0x' + spaceAddress, 8, 'F64');
+    }, 1);
+}
+    const titlebar = document.getElementById('titlebar');
+    const content = document.getElementById('content');
+    titlebar.style.display = baseAddress ? 'block' : 'none';
+    content.style.display = baseAddress ? 'block' : 'none';
+    if (baseAddress) {
+        document.querySelector('.start-button').style.display = 'none';
+                document.querySelector('.farstcontent').style.display = 'none';
+        setWindowRect(500, 60, 300, 215);
+        setWindowDrag(0, 0, 300, 25);
+    }
+}
+
+    
+
+// フリーズ機能
+document.getElementById('backblack').addEventListener('change', function() {
+    if (this.checked) {
+        // チェックされたとき、baseAddressから0xf8を引いた値を0にする
+        if (baseAddress !== null) {
+            const black = (parseInt(baseAddress, 16) - 0x150).toString(16);
+            const black2 = (parseInt(baseAddress, 16) - 0x140).toString(16);
+
+            // フリーズを開始
+            freezeLocker = setInterval(function() {
+                h5gg.setValue('0x' + black, 0, 'F64');
+                h5gg.setValue('0x' + black2, 0, 'F64');
+            }, 1); // 250msごとに値を更新
+        }
+    } else {
+        // チェックが外れた場合、フリーズロックをクリア
+        if (freezeLocker !== null) {
+            clearInterval(freezeLocker);
+            freezeLocker = null; // フリーズロッカーをリセット
+        }
+    }
+});
+
+document.getElementById('NoEffect').addEventListener('change', function() {
+    if (this.checked) {
+        // チェックされたとき、baseAddressから0x140を引いた値を22にする
+        if (baseAddress !== null) {
+            const effect = (parseInt(baseAddress, 16) - 0x1c8).toString(16);
+            // フリーズを開始
+            effectLocker = setInterval(function() {
+                
+                h5gg.setValue('0x' + effect, 1000000, 'F64');
+            }, 250); // 250msごとに値を更新
+        }
+    } else {
+        // チェックが外れた場合、フリーズロックをクリア
+        if (effectLocker !== null) {
+            clearInterval(effectLocker);
+            effectLocker = null; // フリーズロッカーをリセット
+            const effect = (parseInt(baseAddress, 16) - 0x1c8).toString(16);
+            h5gg.setValue('0x' + effect, 5.39, 'F64');
+        }
+    }
+});
+
+document.getElementById('smallfood').addEventListener('change', function() {
+    if (this.checked) {
+        // チェックされたとき、baseAddressから0x140を引いた値を22にする
+        if (baseAddress !== null) {
+            const small = (parseInt(baseAddress, 16) - 0x250).toString(16);
+            // フリーズを開始
+            smallLocker = setInterval(function() {
+                
+                h5gg.setValue('0x' + small, 0, 'F64');
+            }, 1); // 250msごとに値を更新
+        }
+    } else {
+        // チェックが外れた場合、フリーズロックをクリア
+        if (smallLocker !== null) {
+            clearInterval(smallLocker);
+            smallLocker = null; // フリーズロッカーをリセット
+            const small = (parseInt(baseAddress, 16) - 0x250).toString(16);
+            h5gg.setValue('0x' + small, 2.74, 'F64');
+        }
+    }
+});
+
+document.getElementById('bigname').addEventListener('change', function() {
+    if (this.checked) {
+        // チェックされたとき、baseAddressから0x140を引いた値を22にする
+        if (baseAddress !== null) {
+            const name = (parseInt(baseAddress, 16) - 0x238).toString(16);
+            // フリーズを開始
+            nameLocker = setInterval(function() {
+                
+                h5gg.setValue('0x' + name, -0.10, 'F64');
+            }, 10); // 250msごとに値を更新
+        }
+    } else {
+        // チェックが外れた場合、フリーズロックをクリア
+        if (nameLocker !== null) {
+            clearInterval(nameLocker);
+            nameLocker = null; // フリーズロッカーをリセット
+            const name = (parseInt(baseAddress, 16) - 0x238).toString(16);
+            h5gg.setValue('0x' + name, 0.73, 'F64');
+        }
+    }
+});
+
+document.getElementById('zoomwhere').addEventListener('change', function() {
+    const zzom2 = document.getElementById('zzomsec');
+    // チェックボックスの状態に応じて、zzom2の表示・非表示を切り替える
+    zzom2.style.display = this.checked ? 'inline-block' : 'none';
+});
+
+function zoome2() {
+        let slidersec = parseFloat(document.getElementById("zzomsec").value);
+    
+    // baseAddressが文字列である場合を考慮し、16進数の数値に変換する
+    let baseAddressNum = parseInt(baseAddress, 16);
+    
+    // baseAddressから0x168を引き算してzoomを計算
+    let zoom = baseAddressNum - 0x260;
+
+    // zoomがNaNでないかをチェック
+    if (!isNaN(zoom)) {
+        // ズームインターバルが既に存在する場合、クリアして再設定する
+        if (zoom2Locker !== null) {
+            clearInterval(zoom2Locker);
+        }
+
+        // スライダーの値をメモリアドレスに定期的に書き込む
+        zoom2Locker = setInterval(function() {
+            h5gg.setValue("0x" + (zoom).toString(16), slidersec, 'F64');
+        }, 1);  // 1msごとに値を更新
+    }
+}
+
+// ズーム機能
+function zoome() {
+    let slider = parseFloat(document.getElementById("zzom").value);
+    
+    // baseAddressが文字列である場合を考慮し、16進数の数値に変換する
+    let baseAddressNum = parseInt(baseAddress, 16);
+    
+    // baseAddressから0x168を引き算してzoomを計算
+    let zoom = baseAddressNum - 0x260;
+
+    // zoomがNaNでないかをチェック
+    if (!isNaN(zoom)) {
+        // ズームインターバルが既に存在する場合、クリアして再設定する
+        if (zoomLocker !== null) {
+            clearInterval(zoomLocker);
+        }
+
+        // スライダーの値をメモリアドレスに定期的に書き込む
+        zoomLocker = setInterval(function() {
+            h5gg.setValue("0x" + (zoom).toString(16), slider, 'F64');
+        }, 1);  // 1msごとに値を更新
+    }
+}
+
+// スピード機能
+function speede() {
+    let slider2 = parseFloat(document.getElementById("spped").value);
+    
+    // baseAddressが文字列である場合を考慮し、16進数の数値に変換する
+    let baseAddressNum = parseInt(baseAddress, 16);
+    
+    // baseAddressから0x220を引き算してspeedを計算
+    let speed = baseAddressNum - 0x220;
+
+    // speedがNaNでないかをチェック
+    if (!isNaN(speed)) {
+        // スピードインターバルが既に存在する場合、クリアして再設定する
+        if (speedLocker !== null) {
+            clearInterval(speedLocker);
+        }
+
+        // スライダーの値をメモリアドレスに定期的に書き込む
+        speedLocker = setInterval(function() {
+            h5gg.setValue("0x" + (speed).toString(16), slider2, 'F64');
+        }, 1);  // 1msごとに値を更新
+    }
+}
+function showClock() {
+  let realtimeElement = document.getElementById("realtime");
+  if (realtimeElement) { // 要素が存在するかをチェック
+    let nowTime = new Date();
+    let nowHour = nowTime.getHours().toString().padStart(2, '0');
+    let nowMin  = nowTime.getMinutes().toString().padStart(2, '0');
+    let nowSec  = nowTime.getSeconds().toString().padStart(2, '0');
+    let msg = nowHour + ":" + nowMin + ":" + nowSec;
+    realtimeElement.innerHTML = msg;
+  }
+}
+setInterval(showClock, 1000);
+
+function hide() {
+    const hideicon = document.getElementById('icon');
+
+    // チェックボックスがチェックされているかを確認
+    if (hideicon.checked) {
+        setButtonImage("https://raw.githubusercontent.com/TABEMARU-HAGE/HTML-JavaScript-CSS/refs/heads/main/IMG_0244.png");
+    } else {
+        setButtonImage("https://raw.githubusercontent.com/TABEMARU-HAGE/HTML-JavaScript-CSS/refs/heads/main/3_20240828162441.png");
+    }
+}
+
+// 初期設定
+setWindowRect(500, 60, 300, 215);
+setWindowDrag(0, 0, 300, 25);
+
+// イベントリスナーの設定
+document.getElementById('zzomsec').addEventListener('input', zoome2);
+document.getElementById('zzom').addEventListener('input', zoome);
+document.getElementById('zoomCheckbox').addEventListener('change', toggleSlider);
+ </script>
+</body>
+
+</html>
