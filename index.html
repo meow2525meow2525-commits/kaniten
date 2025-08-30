@@ -329,7 +329,7 @@ document.getElementById('NoEffect').addEventListener('change', function() {
             effectLocker = setInterval(function() {
                 
                 h5gg.setValue('0x' + effect, 13, 'F64');
-            }, 250); // 250msごとに値を更新、かえたよひゃくまん
+            }, 10); // 250msごとに値を更新、かえたよひゃくまん
         }
     } else {
         // チェックが外れた場合、フリーズロックをクリア
