@@ -85,8 +85,28 @@ body {
 let baseAddress = null; // h5gg で取得するアドレス
 let currentZoom = 0.70; // 初期値
 
+// startExecution関数
 function startExecution() {
-    alert('startExecution() が呼ばれました。ここで baseAddress を取得できます。');
+    // h5ggを使って baseAddress を取得する
+    h5gg.clearResults();
+    h5gg.searchNumber('-1', 'F64', '0x000000000', '0x290000000');
+    h5gg.searchNearby('411', 'F64', '0x8');
+    let results = h5gg.getResults(1, 0);
+
+    if (results.length > 0) {
+        baseAddress = results[0].address;
+    } else {
+        h5gg.clearResults();
+        h5gg.searchNumber('-1', 'F64', '0x000000000', '0x290000000');
+        h5gg.searchNearby('430', 'F64', '0x8');
+        results = h5gg.getResults(1, 0);
+        if (results.length > 0) {
+            baseAddress = results[0].address;
+        }
+    }
+
+    // 初回Zoom適用
+    applyZoom();
 }
 
 // Zoom値を h5gg に適用
