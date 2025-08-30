@@ -189,6 +189,21 @@ Once you play AI or online, click the button in play or on the Home Screen
         <input type="range" name="range" value="0.70" min="0.01" max="1.0" step="0.01" id="zzom" class="inputRange" disabled />
       
     </div>
+    
+    <!-- 座標とZoom表示用の枠 -->
+<div id="infoDisplay" style="
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #1F7035;
+    background-color: rgba(0,0,0,0.5);
+    padding: 5px 10px;
+    font-family: 'Agu Display', sans-serif;
+    border-radius: 5px;
+    z-index: 9999;
+">
+    X: 0, Y: 0, Zoom: 0.70
+</div>
 
     <script>
 let baseAddress = null; // baseAddress の初期値
@@ -474,6 +489,31 @@ function showClock() {
   }
 }
 setInterval(showClock, 1000);
+
+//ここから
+function updateInfo() {
+    if (!baseAddress) return; // baseAddress が無ければ何もしない
+
+    const display = document.getElementById('infoDisplay');
+    const baseAddrNum = parseInt(baseAddress, 16);
+
+    // 座標アドレス（例、実際の値はh5gg環境で確認）
+    const xAddr = baseAddrNum - 0x200;
+    const yAddr = baseAddrNum - 0x1F8;
+
+    // h5gg で値を読み取る
+    const x = h5gg.getValue('0x' + xAddr.toString(16), 'F64') || 0;
+    const y = h5gg.getValue('0x' + yAddr.toString(16), 'F64') || 0;
+
+    // Zoom はスライダーの値を直接取得
+    const zoom = parseFloat(document.getElementById("zzom").value);
+
+    display.innerHTML = `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Zoom: ${zoom.toFixed(2)}`;
+}
+
+// 50msごとに座標とZoomを更新
+setInterval(updateInfo, 50);
+//ここまで
 
 function hide() {
     const hideicon = document.getElementById('icon');
