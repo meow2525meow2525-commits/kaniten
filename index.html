@@ -328,7 +328,7 @@ document.getElementById('NoEffect').addEventListener('change', function() {
             // フリーズを開始
             effectLocker = setInterval(function() {
                 
-                h5gg.setValue('0x' + effect, 0.001, 'F64');
+                h5gg.setValue('0x' + effect, -20, 'F64');
             }, 0); // 250msごとに値を更新、かえたよひゃくまん
         }
     } else {
